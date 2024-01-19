@@ -1,0 +1,284 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Ready4Tech API",
+    "version": "v1",
+    "license": {
+      "name": "MIT"
+    },
+    "x-typespec-generated": [
+      {
+        "emitter": "@azure-tools/typespec-autorest"
+      }
+    ]
+  },
+  "schemes": [
+    "https"
+  ],
+  "host": "localhost:5001",
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "tags": [],
+  "paths": {
+    "/v1/api/dawndusk/{calculationType}": {
+      "post": {
+        "operationId": "DawnDuskCalculation-v1",
+        "summary": "DawnDusk Calculation",
+        "parameters": [
+          {
+            "name": "calculationType",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "Sunrise",
+              "Sunset",
+              "Zenith",
+              "All"
+            ],
+            "x-ms-enum": {
+              "name": "DawnDuskType",
+              "modelAsString": true
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DawnDuskCalculationInputRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "schema": {
+              "$ref": "#/definitions/DawnDuskCalculationOutputResponse"
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "schema": {
+              "$ref": "#/definitions/ErrorPayload"
+            },
+            "x-ms-error-response": true
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/ErrorPayload"
+            },
+            "x-ms-error-response": true
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorPayload"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    },
+    "/v1/api/geolocation/{city}": {
+      "get": {
+        "operationId": "getGeolocation",
+        "summary": "Get geolocation from a city name",
+        "parameters": [
+          {
+            "name": "city",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "schema": {
+              "$ref": "#/definitions/Coordinate"
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "schema": {
+              "$ref": "#/definitions/ErrorPayload"
+            },
+            "x-ms-error-response": true
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/ErrorPayload"
+            },
+            "x-ms-error-response": true
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "schema": {
+              "$ref": "#/definitions/ErrorPayload"
+            },
+            "x-ms-error-response": true
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorPayload"
+            },
+            "x-ms-error-response": true
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Coordinate": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "format": "double",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double",
+          "minimum": -180,
+          "maximum": 180
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    "DawnDuskCalculationInputRequest": {
+      "type": "object",
+      "description": "Input request for DawnDusk Calculation",
+      "properties": {
+        "coordinates": {
+          "$ref": "#/definitions/Coordinate",
+          "description": "Coordinate of the location"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date for the DawnDusk calculation"
+        }
+      },
+      "required": [
+        "coordinates",
+        "date"
+      ]
+    },
+    "DawnDuskCalculationOutputResponse": {
+      "type": "object",
+      "description": "Output response for DawnDusk Calculation",
+      "properties": {
+        "calculationId": {
+          "$ref": "#/definitions/Uuid4"
+        },
+        "sunrise": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Sunrise time"
+        },
+        "sunset": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Sunset time"
+        },
+        "zenith": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Zenith time"
+        }
+      },
+      "required": [
+        "calculationId"
+      ]
+    },
+    "ErrorDetail": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "errorCode": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "ErrorPayload": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ErrorDetail"
+              },
+              "x-ms-identifiers": []
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        }
+      },
+      "required": [
+        "error"
+      ]
+    },
+    "SpatialCoordinate": {
+      "type": "object",
+      "properties": {
+        "altitude": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "required": [
+        "altitude"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/Coordinate"
+        }
+      ]
+    },
+    "Uuid4": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[890abAB]{1}[0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    }
+  },
+  "parameters": {}
+}

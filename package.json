@@ -1,0 +1,21 @@
+{
+  "name": "typespec-demo-ready4tech",
+  "version": "1.0.0",
+  "scripts": {
+    "openapi": "npm run openapi:format && npm run openapi:build && npm run lint:swagger",
+    "openapi:build": "tsp compile ./TypeSpec/",
+    "openapi:format": "tsp format ./TypeSpec/*.tsp",
+    "openapi:install:vscode": "tsp code install",
+    "kiota:generate:cs": "kiota generate -l CSharp -c KiotaClient -n Ready4Tech.Kiota.Client -d ./contracts/swagger_v1_oa_3.json -o ./ClientSdk/Ready4Tech.Kiota/Client",
+    "kiota:generate:ts": "kiota generate -l typescript -c KiotaClient -d ./contracts/swagger_v1_oa_3.json -o ./ClientSdk/Kiota.TypeScript/client"
+  },
+  "devDependencies": {
+    "@azure-tools/typespec-autorest": "^0.36.1",
+    "eslint": "^8.32.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "@typespec/compiler": "^0.50.0",
+    "@typespec/openapi": "^0.50.0",
+    "@typespec/openapi3": "^0.50.0",
+    "@typespec/rest": "^0.50.0"
+  }
+}

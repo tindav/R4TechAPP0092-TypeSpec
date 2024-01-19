@@ -1,0 +1,311 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Ready4Tech API",
+    "version": "v1",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "tags": [],
+  "paths": {
+    "/v1/api/dawndusk/{calculationType}": {
+      "post": {
+        "operationId": "DawnDuskCalculation-v1",
+        "summary": "DawnDusk Calculation",
+        "parameters": [
+          {
+            "name": "calculationType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Sunrise",
+                "Sunset",
+                "Zenith",
+                "All"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DawnDuskCalculationOutputResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DawnDuskCalculationInputRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/api/geolocation/{city}": {
+      "get": {
+        "operationId": "getGeolocation",
+        "summary": "Get geolocation from a city name",
+        "parameters": [
+          {
+            "name": "city",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Coordinate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The server could not understand the request due to invalid syntax.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access is unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The server cannot find the requested resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPayload"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Coordinate": {
+        "type": "object",
+        "required": [
+          "latitude",
+          "longitude"
+        ],
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "minimum": -180,
+            "maximum": 180
+          }
+        }
+      },
+      "DawnDuskCalculationInputRequest": {
+        "type": "object",
+        "description": "Input request for DawnDusk Calculation",
+        "required": [
+          "coordinates",
+          "date"
+        ],
+        "properties": {
+          "coordinates": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Coordinate"
+              }
+            ],
+            "description": "Coordinate of the location"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date for the DawnDusk calculation"
+          }
+        }
+      },
+      "DawnDuskCalculationOutputResponse": {
+        "type": "object",
+        "description": "Output response for DawnDusk Calculation",
+        "required": [
+          "calculationId"
+        ],
+        "properties": {
+          "calculationId": {
+            "$ref": "#/components/schemas/Uuid4"
+          },
+          "sunrise": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Sunrise time"
+          },
+          "sunset": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Sunset time"
+          },
+          "zenith": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Zenith time"
+          }
+        }
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorPayload": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "SpatialCoordinate": {
+        "type": "object",
+        "required": [
+          "altitude"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Coordinate"
+          }
+        ],
+        "properties": {
+          "altitude": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "Uuid4": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[890abAB]{1}[0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://localhost:5001",
+      "description": "Local Dev Server",
+      "variables": {}
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+emit:
+  - "@typespec/openapi3"
+  - "@azure-tools/typespec-autorest"
+
+options:
+  "@typespec/openapi3":
+    file-type: json
+    output-file: "swagger_v1_oa_3.json"
+    emitter-output-dir: "{project-root}/../contracts"
+    omit-unreachable-types: true
+  "@azure-tools/typespec-autorest":
+    output-file: "swagger_v1.json"
+    emitter-output-dir: "{project-root}/../contracts"
+    omit-unreachable-types: true
